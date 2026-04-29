@@ -15,13 +15,19 @@ import {
 	FieldSeparator,
 } from "@/core/components/ui/field"
 import { Input } from "@/core/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/core/components/ui/select"
 import { cn } from "@/core/lib/utils"
 import { PasswordInput } from "@/features/auth/components/password-input"
 import { SocialLoginButtons } from "@/features/auth/components/social-login-buttons"
 import { TermsPrivacyNote } from "@/features/auth/components/terms-privacy-note"
 
 import { useRegisterMutation } from "../api/register.hooks"
-import { RegisterSchema } from "../api/register.schema"
+import { RegisterSchema, type Register } from "../api/register.schema"
+
+const FACILITY_OPTIONS = [
+	{ value: "QC", label: "Quirino Memorial Medical Center (QC)" },
+	{ value: "BGC", label: "Bonifacio Global City (BGC)" },
+] as const
 
 export function RegisterForm({ className, ...props }: React.ComponentProps<"div">) {
 	const { mutateAsync: register, isPending, isError, error } = useRegisterMutation()
@@ -31,12 +37,13 @@ export function RegisterForm({ className, ...props }: React.ComponentProps<"div"
 			email: "",
 			password: "",
 			name: "",
+			tenantId: "" as "QC" | "BGC" | "",
 		},
 		validators: {
 			onSubmit: RegisterSchema,
 		},
 		onSubmit: async ({ value }) => {
-			await register(value)
+			await register(value as Register)
 		},
 	})
 
@@ -108,6 +115,35 @@ export function RegisterForm({ className, ...props }: React.ComponentProps<"div"
 												required
 												disabled={isPending}
 											/>
+											{isInvalid && <FieldError errors={field.state.meta.errors} />}
+										</Field>
+									)
+								}}
+							/>
+
+							<form.Field
+								name="tenantId"
+								children={field => {
+									const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid
+									return (
+										<Field data-invalid={isInvalid}>
+											<FieldLabel htmlFor={field.name}>Facility</FieldLabel>
+											<Select
+												value={field.state.value}
+												onValueChange={val => field.handleChange(val as "QC" | "BGC")}
+												disabled={isPending}
+											>
+												<SelectTrigger id={field.name}>
+													<SelectValue>Select your facility</SelectValue>
+												</SelectTrigger>
+												<SelectContent>
+													{FACILITY_OPTIONS.map(opt => (
+														<SelectItem key={opt.value} value={opt.value}>
+															{opt.label}
+														</SelectItem>
+													))}
+												</SelectContent>
+											</Select>
 											{isInvalid && <FieldError errors={field.state.meta.errors} />}
 										</Field>
 									)

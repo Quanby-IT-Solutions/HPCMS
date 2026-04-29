@@ -34,6 +34,7 @@
 		"@repo/auth": "workspace:*",
 		"@repo/contracts": "workspace:*",
 		"@repo/db": "workspace:*",
+		"@repo/fhir": "workspace:*",
 		"@scalar/nestjs-api-reference": "^1.0.13",
 		"@t3-oss/env-core": "catalog:",
 		"@thallesp/nestjs-better-auth": "^2.2.0",
@@ -100,6 +101,7 @@
 		"moduleNameMapper": {
 			"^@repo/db/(.*)$": "<rootDir>/../../../packages/db/src/$1",
 			"^@repo/contracts$": "<rootDir>/../../../packages/contracts/src",
+			"^@repo/fhir$": "<rootDir>/../../../packages/fhir/src",
 			"^@/(.*)$": "<rootDir>/$1"
 		}
 	}

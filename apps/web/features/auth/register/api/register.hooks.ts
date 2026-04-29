@@ -14,7 +14,12 @@ export function useRegisterMutation() {
 
 	return useMutation({
 		mutationFn: async (data: Register) => {
-			const result = await authClient.signUp.email(data)
+			const result = await (authClient.signUp.email as (args: Register) => Promise<{ error?: { message?: string } }>)({
+				name: data.name,
+				email: data.email,
+				password: data.password,
+				tenantId: data.tenantId,
+			})
 			if (result.error) {
 				throw new Error(result.error.message || "Failed to sign up")
 			}
@@ -22,8 +27,7 @@ export function useRegisterMutation() {
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: sessionKeys.all })
-			router.push("/")
-			router.refresh()
+			router.push("/check-email")
 		},
 	})
 }

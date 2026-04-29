@@ -22,6 +22,7 @@ import { TermsPrivacyNote } from "@/features/auth/components/terms-privacy-note"
 
 import { useLoginMutation } from "../api/login.hooks"
 import { LoginSchema } from "../api/login.schema"
+import { DevLoginBanner } from "./dev-login-banner"
 
 export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
 	const { mutateAsync: login, isPending, isError, error } = useLoginMutation()
@@ -159,6 +160,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
 					</div>
 				</CardContent>
 			</Card>
+			{process.env.NODE_ENV === "development" && <DevLoginBanner />}
 			<TermsPrivacyNote />
 		</div>
 	)

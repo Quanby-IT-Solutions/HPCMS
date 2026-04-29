@@ -2,7 +2,7 @@ import { Logger, VersioningType, type INestApplication } from "@nestjs/common"
 import { NestFactory } from "@nestjs/core"
 
 import { AppModule } from "@/app.module"
-import { configureApp } from "@/config/app.config"
+import { configureCors, configureApp } from "@/config/app.config"
 import { setupBetterAuth } from "@/config/auth.config"
 import { env } from "@/config/env.config"
 import { setupSwagger } from "@/config/swagger.config"
@@ -25,10 +25,12 @@ async function createApplication(): Promise<INestApplication> {
 	logger.log("Creating NestJS application...")
 	const app = await NestFactory.create(AppModule, { bodyParser: false })
 
-	// IMPORTANT: Better Auth must be registered BEFORE express.json() body parser.
-	// Better Auth's toNodeHandler reads the raw request stream for body parsing.
-	// If express.json() runs first, it consumes the stream and Better Auth sees
-	// an empty body → sign-in/sign-up return null.
+	// Order matters:
+	// 1. CORS — must run before Better Auth so preflight OPTIONS responses include
+	//    Access-Control-Allow-Origin headers before Better Auth intercepts them.
+	// 2. Better Auth — must run before body parser so it can read the raw stream.
+	// 3. Body parser + other app config.
+	configureCors(app)
 	setupBetterAuth(app)
 	configureApp(app)
 	setupVersioning(app)

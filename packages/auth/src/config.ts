@@ -35,6 +35,18 @@ export const authEnv = createEnv({
  */
 export const AUTH_BASE_PATH = "/auth"
 
+type EmailCallbacks = {
+	sendVerificationEmail?: (params: { user: { email: string; name: string }; token: string }) => Promise<void>
+	sendResetPassword?: (params: { user: { email: string; name: string }; url: string }) => Promise<void>
+}
+
+const emailCallbacks: EmailCallbacks = {}
+
+export function configureAuthEmailCallbacks(callbacks: EmailCallbacks): void {
+	if (callbacks.sendVerificationEmail) emailCallbacks.sendVerificationEmail = callbacks.sendVerificationEmail
+	if (callbacks.sendResetPassword) emailCallbacks.sendResetPassword = callbacks.sendResetPassword
+}
+
 /**
  * Creates a Better Auth instance configured with Drizzle adapter.
  *
@@ -62,9 +74,29 @@ export function createAuth(): ReturnType<typeof betterAuth> {
 		}),
 		basePath: AUTH_BASE_PATH,
 		secret: authEnv.BETTER_AUTH_SECRET,
+		user: {
+			additionalFields: {
+				role: {
+					type: "string",
+					defaultValue: "patient",
+					input: false,
+				},
+				tenantId: {
+					type: "string",
+					required: false,
+					input: true,
+				},
+			},
+		},
 		emailAndPassword: {
 			enabled: true,
-			requireEmailVerification: false,
+			requireEmailVerification: true,
+			sendVerificationEmail: async (params: { user: { email: string; name: string }; token: string }) => {
+				await emailCallbacks.sendVerificationEmail?.(params)
+			},
+			sendResetPassword: async (params: { user: { email: string; name: string }; url: string }) => {
+				await emailCallbacks.sendResetPassword?.(params)
+			},
 		},
 		socialProviders: {
 			google: {
@@ -117,3 +149,4 @@ export function getAuth(): ReturnType<typeof betterAuth> {
  * Export this so web app can use the correct types matching backend config.
  */
 export type Session = ReturnType<typeof getAuth>["$Infer"]["Session"]
+export type Auth = ReturnType<typeof getAuth>
