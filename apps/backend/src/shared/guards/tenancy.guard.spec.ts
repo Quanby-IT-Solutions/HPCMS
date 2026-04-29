@@ -52,7 +52,7 @@ const makeCtx = (session: MockSession, headers: Record<string, string> = {}) => 
 
 describe("TenancyGuard", () => {
 	let guard: TenancyGuard
-	let tenancyService: jest.Mocked<Pick<TenancyService, "setTenantId" | "getTenantId">>
+	let tenancyService: jest.Mocked<Pick<TenancyService, "setTenantId" | "getTenantId" | "setUserId">>
 
 	beforeEach(async () => {
 		jest.clearAllMocks()
@@ -60,6 +60,7 @@ describe("TenancyGuard", () => {
 		tenancyService = {
 			setTenantId: jest.fn(),
 			getTenantId: jest.fn(),
+			setUserId: jest.fn(),
 		}
 
 		const module: TestingModule = await Test.createTestingModule({

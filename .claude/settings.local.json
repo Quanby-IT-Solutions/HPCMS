@@ -121,7 +121,8 @@
       "Bash(echo '{}')",
       "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); deps=list\\(d.get\\('dependencies',{}\\).keys\\(\\)\\)+list\\(d.get\\('devDependencies',{}\\).keys\\(\\)\\); print\\('\\\\n'.join\\([x for x in deps if 'icon' in x.lower\\(\\) or 'lucide' in x.lower\\(\\) or 'heroic' in x.lower\\(\\) or 'feather' in x.lower\\(\\)]\\)\\)\")",
       "Bash(xargs -I{} grep '\"version\"' {})",
-      "Bash(pnpm db:seed)"
+      "Bash(pnpm db:seed)",
+      "Bash(git *)"
     ]
   }
 }
