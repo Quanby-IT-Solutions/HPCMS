@@ -1,0 +1,38 @@
+/**
+ * PAT-FE-02 — Patient portal design tokens.
+ *
+ * The portal inherits the global shadcn token set (already WCAG-AA tuned).
+ * This file adds patient-specific overrides:
+ *  - Locks in a 16px base for portal pages
+ *  - Tightens focus indicators to be unmistakable
+ *  - Honors prefers-reduced-motion explicitly
+ */
+
+[data-portal-shell] {
+	font-size: 16px;
+	line-height: 1.55;
+
+	/* Slightly larger spacing scale for older patients on small screens. */
+	--portal-spacing-1: 0.25rem;
+	--portal-spacing-2: 0.5rem;
+	--portal-spacing-3: 0.75rem;
+	--portal-spacing-4: 1rem;
+	--portal-spacing-6: 1.5rem;
+	--portal-spacing-8: 2rem;
+}
+
+[data-portal-shell] :focus-visible {
+	outline: 2px solid var(--ring);
+	outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	[data-portal-shell] *,
+	[data-portal-shell] *::before,
+	[data-portal-shell] *::after {
+		animation-duration: 0.001ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.001ms !important;
+		scroll-behavior: auto !important;
+	}
+}

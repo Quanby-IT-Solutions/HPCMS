@@ -33,6 +33,16 @@ export const env = createEnv({
 		NEXT_PUBLIC_APP_URL: z.url().default("http://localhost:3001"),
 		NEXT_PUBLIC_API_BASE_URL: z.url().default("http://localhost:3000/api"),
 		NEXT_PUBLIC_API_VERSION: z.string().default("v1"),
+
+		// SMART on FHIR clinician launch
+		NEXT_PUBLIC_EMR_FRAME_ORIGINS: z
+			.string()
+			.default("http://localhost:* https://*.altera-sunrise.dev"),
+		NEXT_PUBLIC_SMART_CLIENT_ID: z.string().default("pcms-dev"),
+		NEXT_PUBLIC_SMART_REDIRECT_URI: z
+			.url()
+			.default("http://localhost:3001/clinician/callback"),
+		NEXT_PUBLIC_SMART_SCOPES: z.string().default("launch openid fhirUser patient/*.read"),
 	},
 
 	/**
@@ -48,6 +58,10 @@ export const env = createEnv({
 		NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
 		NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL,
 		NEXT_PUBLIC_API_VERSION: process.env.NEXT_PUBLIC_API_VERSION,
+		NEXT_PUBLIC_EMR_FRAME_ORIGINS: process.env.NEXT_PUBLIC_EMR_FRAME_ORIGINS,
+		NEXT_PUBLIC_SMART_CLIENT_ID: process.env.NEXT_PUBLIC_SMART_CLIENT_ID,
+		NEXT_PUBLIC_SMART_REDIRECT_URI: process.env.NEXT_PUBLIC_SMART_REDIRECT_URI,
+		NEXT_PUBLIC_SMART_SCOPES: process.env.NEXT_PUBLIC_SMART_SCOPES,
 	},
 
 	/**

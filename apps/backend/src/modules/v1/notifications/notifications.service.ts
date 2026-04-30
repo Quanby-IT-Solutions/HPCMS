@@ -3,7 +3,7 @@ import { and, count, eq, inArray, isNull, sql } from "drizzle-orm"
 
 import { notifications } from "@repo/db/schema"
 
-import { db, tenantDb } from "@/common/database/database.client"
+import { db, tenantDb, tryTenantId } from "@/common/database/database.client"
 import { type V1Inputs } from "@/config/contract-types"
 
 type ListInput = V1Inputs["notifications"]["list"]
@@ -12,13 +12,17 @@ type MarkReadInput = V1Inputs["notifications"]["markRead"]
 @Injectable()
 export class NotificationsReadService {
 	async list(input: ListInput, userId: string) {
-		const ctx = tenantDb()
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const unreadOnly = (input as any).unreadOnly as boolean | undefined
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const page = (input as any).page as number
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const limit = (input as any).limit as number
+
+		// system_admin without x-tenant-id header has no tenant-scoped notifications
+		if (!tryTenantId()) return { items: [], unreadCount: 0, total: 0, page, limit }
+
+		const ctx = tenantDb()
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const unreadOnly = (input as any).unreadOnly as boolean | undefined
 		const offset = (page - 1) * limit
 
 		const baseWhere = and(

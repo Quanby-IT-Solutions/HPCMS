@@ -26,7 +26,7 @@ export function getTenantOverride() {
 const link = new OpenAPILink(v1Contract, {
 	url: getBaseUrl(),
 	fetch: (url, init) => {
-		const headers = new Headers(init?.headers as HeadersInit | undefined)
+		const headers = new Headers((init as RequestInit | undefined)?.headers)
 		if (_tenantOverride) headers.set("x-tenant-id", _tenantOverride)
 		return fetch(url, { ...init, headers, credentials: "include" })
 	},

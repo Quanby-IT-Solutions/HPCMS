@@ -122,7 +122,14 @@
       "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); deps=list\\(d.get\\('dependencies',{}\\).keys\\(\\)\\)+list\\(d.get\\('devDependencies',{}\\).keys\\(\\)\\); print\\('\\\\n'.join\\([x for x in deps if 'icon' in x.lower\\(\\) or 'lucide' in x.lower\\(\\) or 'heroic' in x.lower\\(\\) or 'feather' in x.lower\\(\\)]\\)\\)\")",
       "Bash(xargs -I{} grep '\"version\"' {})",
       "Bash(pnpm db:seed)",
-      "Bash(git *)"
+      "Bash(git *)",
+      "Bash(pnpm *)",
+      "Bash(xargs grep *)",
+      "Bash(awk '{print $2}')",
+      "mcp__plugin_claude-mem_mcp-search__smart_outline",
+      "Bash(xargs -I {} find {} -name \"*.tsx\")",
+      "Bash(python3 *)",
+      "Bash(grep -v \"^$\")"
     ]
   }
 }

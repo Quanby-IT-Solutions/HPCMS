@@ -58,3 +58,67 @@ export const PatientSearchInputSchema = z.object({
 	query: z.string().min(1),
 	limit: z.coerce.number().int().positive().max(100).default(20),
 })
+
+// ============================================================================
+// Recent patients (CA-FE-03)
+// ============================================================================
+
+export const PatientRecentInputSchema = z.object({
+	limit: z.coerce.number().int().positive().max(50).default(10),
+})
+
+export const RecentPatientSchema = z.object({
+	id: z.string(),
+	mrn: z.string(),
+	fullName: z.string(),
+	lastInteractionAt: nullableDateOrString,
+	lastInteractionChannel: z.string().nullable(),
+	openCaseCount: z.number().int().nonnegative(),
+})
+export const PatientRecentOutputSchema = z.object({
+	patients: z.array(RecentPatientSchema),
+})
+
+// ============================================================================
+// Patient 360 timeline (CA-FE-04)
+// ============================================================================
+
+export const TimelineEntryKindSchema = z.enum([
+	"email",
+	"phone",
+	"portal_chat",
+	"social",
+	"case_event",
+	"fhir_event",
+	"consent_event",
+])
+
+export const TimelineEntrySchema = z.object({
+	id: z.string(),
+	kind: TimelineEntryKindSchema,
+	occurredAt: dateOrString,
+	channel: z.string().nullable(),
+	caseRef: z.string().nullable(),
+	actorName: z.string().nullable(),
+	title: z.string(),
+	preview: z.string().nullable(),
+	body: z.string().nullable(),
+})
+export type TimelineEntry = z.infer<typeof TimelineEntrySchema>
+
+export const PatientTimelineInputSchema = z.object({
+	patientId: z.string(),
+	channel: z.string().optional(),
+	caseType: z.string().optional(),
+	agentId: z.string().optional(),
+	dateFrom: z.string().optional(),
+	dateTo: z.string().optional(),
+	page: z.coerce.number().int().positive().default(1),
+	limit: z.coerce.number().int().positive().max(100).default(50),
+})
+export const PatientTimelineOutputSchema = z.object({
+	entries: z.array(TimelineEntrySchema),
+	total: z.number().int().nonnegative(),
+	page: z.number().int().positive(),
+	pageSize: z.number().int().positive(),
+})

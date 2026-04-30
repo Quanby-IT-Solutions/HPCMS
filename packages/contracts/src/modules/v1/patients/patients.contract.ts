@@ -3,8 +3,12 @@ import { z } from "zod"
 
 import {
 	PatientIdSchema,
+	PatientRecentInputSchema,
+	PatientRecentOutputSchema,
 	PatientSchema,
 	PatientSearchInputSchema,
+	PatientTimelineInputSchema,
+	PatientTimelineOutputSchema,
 	VerifyMrnInputSchema,
 	VerifyMrnOutputSchema,
 } from "./patients.schema.js"
@@ -48,4 +52,26 @@ export const patientsContract = {
 		})
 		.input(PatientIdSchema)
 		.output(PatientSchema),
+
+	recent: oc
+		.route({
+			method: "GET",
+			path: "/patients/recent",
+			summary: "Recent patients touched by the current agent",
+			tags: ["Patients"],
+		})
+		.input(PatientRecentInputSchema)
+		.output(PatientRecentOutputSchema),
+
+	timeline: {
+		list: oc
+			.route({
+				method: "GET",
+				path: "/patients/{patientId}/timeline",
+				summary: "Patient 360 chronological timeline across channels + cases + FHIR",
+				tags: ["Patients"],
+			})
+			.input(PatientTimelineInputSchema)
+			.output(PatientTimelineOutputSchema),
+	},
 }

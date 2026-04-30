@@ -1,5 +1,5 @@
-import { CasesPageClient } from "@/features/staff-case-queue/components/cases-page-client"
+import { permanentRedirect } from "next/navigation"
 
-export default function CasesPage() {
-	return <CasesPageClient />
+export default function StaffCasesRedirect() {
+	permanentRedirect("/agent/cases")
 }

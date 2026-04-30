@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 
@@ -43,6 +43,20 @@ export function VerifyForm() {
 	const [lockedUntilMs, setLockedUntilMs] = useState<number | null>(null)
 	const [mismatch, setMismatch] = useState<MismatchState | null>(null)
 	const [attemptsRemaining, setAttemptsRemaining] = useState<number | null>(null)
+	const [now, setNow] = useState<number | null>(null)
+
+	useEffect(() => {
+		if (lockedUntilMs === null) {
+			const t0 = setTimeout(() => setNow(null), 0)
+			return () => clearTimeout(t0)
+		}
+		const t0 = setTimeout(() => setNow(Date.now()), 0)
+		const interval = setInterval(() => setNow(Date.now()), 1000)
+		return () => {
+			clearTimeout(t0)
+			clearInterval(interval)
+		}
+	}, [lockedUntilMs])
 
 	function validate(): boolean {
 		const next: FormErrors = {}
@@ -99,7 +113,7 @@ export function VerifyForm() {
 		void submit(switchTenantTo)
 	}
 
-	const isLocked = lockedUntilMs !== null && lockedUntilMs > Date.now()
+	const isLocked = lockedUntilMs !== null && now !== null && lockedUntilMs > now
 
 	return (
 		<>

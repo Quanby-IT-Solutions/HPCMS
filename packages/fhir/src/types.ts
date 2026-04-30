@@ -1,5 +1,5 @@
-import { FhirPatient } from "./models/patient"
-import { FhirPractitioner } from "./models/practitioner"
+import { type FhirPatient } from "./models/patient"
+import { type FhirPractitioner } from "./models/practitioner"
 
 export interface PatientSearchParams {
 	identifier?: string

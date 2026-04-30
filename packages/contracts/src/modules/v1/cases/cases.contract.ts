@@ -14,9 +14,13 @@ import {
 	LoaSubmitOutputSchema,
 	MyRequestsInputSchema,
 	PaginatedCasesOutputSchema,
+	QueueKpisOutputSchema,
+	QueueListInputSchema,
+	QueueListOutputSchema,
 	RejectInputSchema,
 	RequestUploadsInputSchema,
 	RequestUploadsOutputSchema,
+	ResolveInputSchema,
 	WithdrawInputSchema,
 } from "./cases.schema.js"
 
@@ -141,5 +145,36 @@ export const casesContract = {
 			tags: ["Cases"],
 		})
 		.input(AddEventInputSchema)
+		.output(CaseMutationOutputSchema),
+
+	queue: {
+		list: oc
+			.route({
+				method: "GET",
+				path: "/cases/queue",
+				summary: "Case Agent queue: list cases with SLA + risk + assignment data",
+				tags: ["Cases"],
+			})
+			.input(QueueListInputSchema)
+			.output(QueueListOutputSchema),
+
+		kpis: oc
+			.route({
+				method: "GET",
+				path: "/cases/queue/kpis",
+				summary: "KPI counts for the case queue dashboard",
+				tags: ["Cases"],
+			})
+			.output(QueueKpisOutputSchema),
+	},
+
+	resolve: oc
+		.route({
+			method: "POST",
+			path: "/cases/{ref}/resolve",
+			summary: "Resolve a case with one of four resolution categories",
+			tags: ["Cases"],
+		})
+		.input(ResolveInputSchema)
 		.output(CaseMutationOutputSchema),
 }

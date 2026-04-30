@@ -77,12 +77,13 @@ export function RequestsList({ hasLinkedPatient }: RequestsListProps) {
 			{data.items.map(item => {
 				const badge = STATUS_BADGE[item.status]
 				return (
-					<Link key={item.id} href={`/portal/my-requests/${item.caseRef}`}>
+					<Link key={item.id} href={`/portal/requests/${item.caseRef}`}>
 						<Card className="hover:bg-accent/50 cursor-pointer transition-colors">
 							<CardContent className="flex items-center justify-between gap-4 py-4">
 								<div className="min-w-0">
 									<p className="font-medium">{item.caseRef}</p>
-									<p className="text-muted-foreground text-sm">
+									<p className="text-muted-foreground text-sm capitalize">
+										{item.caseType.replace(/_/g, " ")} · submitted{" "}
 										{new Date(item.submittedAt).toLocaleDateString()}
 									</p>
 								</div>

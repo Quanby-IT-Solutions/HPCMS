@@ -49,6 +49,12 @@ export function _registerCls(cls: { get: (key: string) => unknown }): void {
 	_cls = cls
 }
 
+/** Returns the current tenant ID without throwing — null when no tenant is in context (e.g. system_admin without x-tenant-id header). */
+export function tryTenantId(): string | null {
+	if (!_cls) return null
+	return (_cls.get("tenantId") as string | undefined) ?? null
+}
+
 export function tenantDb(): TenantContext {
 	if (!_cls) {
 		throw new Error("CLS not initialized — import TenancyModule in AppModule before using tenantDb().")

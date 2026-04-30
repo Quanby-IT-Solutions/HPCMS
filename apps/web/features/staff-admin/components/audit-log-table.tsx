@@ -70,7 +70,7 @@ export function AuditLogTable() {
 									{new Date(log.createdAt).toLocaleString()}
 								</TableCell>
 								<TableCell className="font-mono text-xs">
-									{log.actorUserId ? log.actorUserId.slice(0, 10) + "…" : "system"}
+									{log.actorUserId ? `${log.actorUserId.slice(0, 10)}…` : "system"}
 								</TableCell>
 								<TableCell className="text-sm">{log.actionKey}</TableCell>
 								<TableCell className="text-xs">{log.targetType}</TableCell>

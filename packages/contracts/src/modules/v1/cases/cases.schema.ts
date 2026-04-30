@@ -173,3 +173,62 @@ export const AddEventInputSchema = z.object({
 	payload: z.record(z.string(), z.unknown()).optional(),
 	visibility: CaseVisibilitySchema.default("internal"),
 })
+
+// ============================================================================
+// Queue (CA-BE-04) — extended list + KPIs for the case agent dashboard
+// ============================================================================
+
+export const RiskLevelSchema = z.enum(["low", "moderate", "high", "critical"])
+export type RiskLevel = z.infer<typeof RiskLevelSchema>
+
+export const QueueRowSchema = CaseSchema.extend({
+	patientName: z.string(),
+	patientMrn: z.string(),
+	assigneeName: z.string().nullable(),
+	slaDueAt: nullableDateOrString,
+	slaBreached: z.boolean(),
+	ageMinutes: z.number().int().nonnegative(),
+	riskLevel: RiskLevelSchema.nullable(),
+	flagCount: z.number().int().nonnegative().default(0),
+})
+export type QueueRow = z.infer<typeof QueueRowSchema>
+
+export const QueueListInputSchema = CaseListInputSchema.extend({
+	riskLevel: RiskLevelSchema.optional(),
+	slaBreaching: z.boolean().optional(),
+})
+
+export const QueueListOutputSchema = z.object({
+	items: z.array(QueueRowSchema),
+	total: z.number(),
+	page: z.number(),
+	pageSize: z.number(),
+})
+
+export const QueueKpisOutputSchema = z.object({
+	mineCount: z.number().int().nonnegative(),
+	teamCount: z.number().int().nonnegative(),
+	allOpenCount: z.number().int().nonnegative(),
+	slaBreachingCount: z.number().int().nonnegative(),
+	criticalRiskCount: z.number().int().nonnegative(),
+})
+
+// ============================================================================
+// Resolution (CA-FE-07)
+// ============================================================================
+
+export const ResolveCategorySchema = z.enum([
+	"resolved_patient_satisfied",
+	"escalated_to_clinician",
+	"closed_duplicate",
+	"closed_no_action",
+])
+export type ResolveCategory = z.infer<typeof ResolveCategorySchema>
+
+export const ResolveInputSchema = z.object({
+	ref: z.string(),
+	category: ResolveCategorySchema,
+	summary: z.string().min(1).max(2000),
+	attachmentKeys: z.array(z.string()).default([]),
+	notifyPatient: z.boolean().default(true),
+})

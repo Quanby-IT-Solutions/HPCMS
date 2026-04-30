@@ -4,6 +4,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { useForm } from "@tanstack/react-form"
 
+import { env } from "@/env"
 import { Button, buttonVariants } from "@/core/components/ui/button"
 import { Card, CardContent } from "@/core/components/ui/card"
 import {
@@ -98,7 +99,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
 											<div className="flex items-center">
 												<FieldLabel htmlFor={field.name}>Password</FieldLabel>
 												<Link
-													href="#"
+													href="/password-reset"
 													className={cn(
 														buttonVariants({ size: "sm", variant: "link" }),
 														"text-card-foreground ml-auto h-auto"
@@ -160,7 +161,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
 					</div>
 				</CardContent>
 			</Card>
-			{process.env.NODE_ENV === "development" && <DevLoginBanner />}
+			{env.NODE_ENV === "development" && <DevLoginBanner />}
 			<TermsPrivacyNote />
 		</div>
 	)

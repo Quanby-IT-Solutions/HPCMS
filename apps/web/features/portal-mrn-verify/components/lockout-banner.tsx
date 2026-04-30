@@ -17,16 +17,20 @@ function formatCountdown(ms: number) {
 }
 
 export function LockoutBanner({ lockedUntilMs }: LockoutBannerProps) {
-	const [remaining, setRemaining] = useState(lockedUntilMs - Date.now())
+	const [remaining, setRemaining] = useState<number | null>(null)
 
 	useEffect(() => {
+		const t0 = setTimeout(() => setRemaining(lockedUntilMs - Date.now()), 0)
 		const interval = setInterval(() => {
 			setRemaining(lockedUntilMs - Date.now())
 		}, 1000)
-		return () => clearInterval(interval)
+		return () => {
+			clearTimeout(t0)
+			clearInterval(interval)
+		}
 	}, [lockedUntilMs])
 
-	if (remaining <= 0) return null
+	if (remaining === null || remaining <= 0) return null
 
 	return (
 		<Alert variant="destructive">

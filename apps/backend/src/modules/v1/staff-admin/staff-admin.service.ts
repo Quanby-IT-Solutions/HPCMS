@@ -10,7 +10,7 @@ import { and, count, eq, gte, ilike, lte, or, sql } from "drizzle-orm"
 
 import { auditLogs, users, verifications } from "@repo/db/schema"
 
-import { db, tenantDb } from "@/common/database/database.client"
+import { db, tryTenantId } from "@/common/database/database.client"
 import { EmailService } from "@/common/email/email.service"
 import { env } from "@/config/env.config"
 import { type V1Inputs } from "@/config/contract-types"
@@ -37,7 +37,7 @@ export class StaffAdminService {
 	}
 
 	async listUsers(input: ListUsersInput) {
-		const ctx = tenantDb()
+		const tenantId = tryTenantId()
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const page = (input as any).page as number
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -48,7 +48,8 @@ export class StaffAdminService {
 		const query = (input as any).query as string | undefined
 		const offset = (page - 1) * limit
 
-		const conditions = [eq(users.tenantId, ctx.tenantId)]
+		// system_admin without x-tenant-id header: no tenant filter (see all users)
+		const conditions = tenantId ? [eq(users.tenantId, tenantId)] : []
 		if (role) conditions.push(eq(users.role, role as typeof users.role._.data))
 		if (query) {
 			conditions.push(
@@ -179,7 +180,7 @@ export class StaffAdminService {
 	}
 
 	async listAuditLogs(input: ListAuditInput) {
-		const ctx = tenantDb()
+		const tenantId = tryTenantId()
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const page = (input as any).page as number
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -196,7 +197,8 @@ export class StaffAdminService {
 		const dateTo = (input as any).dateTo as string | undefined
 		const offset = (page - 1) * limit
 
-		const conditions = [eq(auditLogs.tenantId, ctx.tenantId)]
+		// system_admin without x-tenant-id header: no tenant filter (see all audit logs)
+		const conditions = tenantId ? [eq(auditLogs.tenantId, tenantId)] : []
 		if (targetType) conditions.push(eq(auditLogs.targetType, targetType))
 		if (actorUserId) conditions.push(eq(auditLogs.actorUserId, actorUserId))
 		if (actionKey) conditions.push(eq(auditLogs.actionKey, actionKey))

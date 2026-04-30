@@ -11,7 +11,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/core/components/ui/c
 import { Skeleton } from "@/core/components/ui/skeleton"
 import type { CaseAttachment, CaseEvent, CaseStatus } from "@repo/contracts"
 
+import Link from "next/link"
+
 import { useCaseQuery, useSignDownloadQuery } from "../api/cases.hooks"
+import { StatusStepper } from "./status-stepper"
 import { WithdrawConfirmDialog } from "./withdraw-confirm-dialog"
 
 const STATUS_BADGE: Record<CaseStatus, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
@@ -64,6 +67,17 @@ function AttachmentRow({ caseRef, attachment }: { caseRef: string; attachment: C
 	)
 }
 
+function extractNoteBody(payload: unknown): string | null {
+	if (payload && typeof payload === "object") {
+		const p = payload as Record<string, unknown>
+		const candidates = [p.note, p.body, p.message, p.comment]
+		for (const c of candidates) {
+			if (typeof c === "string" && c.trim().length > 0) return c
+		}
+	}
+	return null
+}
+
 function EventTimeline({ events }: { events: CaseEvent[] }) {
 	const patientEvents = events.filter(e => e.visibility === "patient")
 
@@ -73,17 +87,25 @@ function EventTimeline({ events }: { events: CaseEvent[] }) {
 
 	return (
 		<ol className="relative border-l">
-			{patientEvents.map(event => (
-				<li key={event.id} className="mb-6 ml-4">
-					<div className="bg-primary absolute -left-1.5 mt-1.5 size-3 rounded-full border" />
-					<p className="text-sm font-medium">
-						{EVENT_LABELS[event.eventType] ?? event.eventType.replace(/_/g, " ")}
-					</p>
-					<p className="text-muted-foreground text-xs">
-						{new Date(event.createdAt).toLocaleString()}
-					</p>
-				</li>
-			))}
+			{patientEvents.map(event => {
+				const noteBody = extractNoteBody(event.payload)
+				return (
+					<li key={event.id} className="mb-6 ml-4">
+						<div className="bg-primary absolute -left-1.5 mt-1.5 size-3 rounded-full border" />
+						<p className="text-sm font-medium">
+							{EVENT_LABELS[event.eventType] ?? event.eventType.replace(/_/g, " ")}
+						</p>
+						<p className="text-muted-foreground text-xs">
+							{new Date(event.createdAt).toLocaleString()}
+						</p>
+						{noteBody ? (
+							<p className="bg-muted/30 mt-2 whitespace-pre-wrap rounded-md p-2 text-xs">
+								{noteBody}
+							</p>
+						) : null}
+					</li>
+				)
+			})}
 		</ol>
 	)
 }
@@ -141,6 +163,61 @@ export function CaseDetail({ caseRef }: CaseDetailProps) {
 					<AlertDescription>{data.rejectionReason}</AlertDescription>
 				</Alert>
 			)}
+
+			<Card>
+				<CardHeader>
+					<CardTitle className="text-base">Status</CardTitle>
+				</CardHeader>
+				<CardContent>
+					<StatusStepper status={data.status} />
+				</CardContent>
+			</Card>
+
+			{data.payload && typeof data.payload === "object" ? (
+				<Card>
+					<CardHeader>
+						<CardTitle className="text-base">Submitted details</CardTitle>
+					</CardHeader>
+					<CardContent>
+						<dl className="grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
+							{Object.entries(data.payload as Record<string, unknown>).map(([k, v]) => {
+								const value =
+									v === null || v === undefined
+										? "—"
+										: typeof v === "string" || typeof v === "number"
+											? String(v)
+											: JSON.stringify(v)
+								return (
+									<div key={k} className="flex flex-col gap-0.5">
+										<dt className="text-muted-foreground text-[11px] uppercase tracking-wider">
+											{k.replace(/([A-Z])/g, " $1").replace(/^./, c => c.toUpperCase())}
+										</dt>
+										<dd className="font-medium">{value}</dd>
+									</div>
+								)
+							})}
+						</dl>
+					</CardContent>
+				</Card>
+			) : null}
+
+			<Card>
+				<CardHeader>
+					<CardTitle className="text-base">Need to send more info?</CardTitle>
+				</CardHeader>
+				<CardContent className="text-muted-foreground flex items-center justify-between gap-4 text-sm">
+					<span>
+						Reply directly to the team if they&apos;ve asked for additional documents or
+						clarifications.
+					</span>
+					<Link
+						href={`/portal/chat?case=${data.caseRef}`}
+						className="bg-primary text-primary-foreground hover:bg-primary/90 inline-flex shrink-0 items-center rounded-md px-3 py-1.5 text-xs font-medium"
+					>
+						Reply to team
+					</Link>
+				</CardContent>
+			</Card>
 
 			<Card>
 				<CardHeader>

@@ -1,7 +1,7 @@
 import { FhirNotFoundError } from "../errors.js"
-import { FhirPatient, FhirPatientSchema } from "../models/patient.js"
-import { FhirPractitioner, FhirPractitionerSchema } from "../models/practitioner.js"
-import { FhirClient, PatientSearchParams } from "../types.js"
+import { type FhirPatient, FhirPatientSchema } from "../models/patient.js"
+import { type FhirPractitioner, FhirPractitionerSchema } from "../models/practitioner.js"
+import { type FhirClient, type PatientSearchParams } from "../types.js"
 
 const STUB_PATIENTS: FhirPatient[] = [
 	FhirPatientSchema.parse({
