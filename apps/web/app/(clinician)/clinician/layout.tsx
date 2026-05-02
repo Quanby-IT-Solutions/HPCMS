@@ -1,14 +1,21 @@
+import { ClinicianLaunchProvider } from "@/features/clinician-shared/components/clinician-launch-provider"
+import { ClinicianHeader } from "@/features/clinician-shared/components/clinician-header"
+
 /**
- * Per CL-FE-01: minimal layout, no chrome.
+ * Per CL-FE-01: minimal layout, conditional chrome.
  *
- * The (clinician) route group is iframe-embedded inside the EMR. We must NOT
- * add navigation, sign-out, headers, or anything else that would compete with
- * the EMR's own chrome.
- *
- * The 360-480px width cap lives on the leaf routes that are actually embedded
- * (sidebar/[patientId], launch/error, callback/error) so the standalone
- * fallback page and design showcase can render at their natural width.
+ * The (clinician) route group is designed to be embedded inside the EMR or accessed standalone.
+ * ClinicianLaunchProvider detects the context and ClinicianHeader only renders if standalone.
  */
 export default function ClinicianLayout({ children }: { children: React.ReactNode }) {
-	return <div className="bg-background text-foreground min-h-screen">{children}</div>
+	return (
+		<ClinicianLaunchProvider>
+			<div className="bg-background text-foreground flex min-h-screen flex-col">
+				<ClinicianHeader />
+				<div className="flex flex-1 flex-col overflow-hidden">
+					{children}
+				</div>
+			</div>
+		</ClinicianLaunchProvider>
+	)
 }

@@ -3,32 +3,26 @@
 import * as React from "react"
 import type { Route } from "next"
 import Link from "next/link"
-import { GitbookFreeIcons } from "@hugeicons/core-free-icons"
-import { HugeiconsIcon } from "@hugeicons/react"
+import Image from "next/image"
 
 import { Button, buttonVariants, type ButtonVariants } from "@/core/components/ui/button"
 import { cn } from "@/core/lib/utils"
 
-export interface LogoIconProps extends Omit<
-	React.ComponentPropsWithoutRef<typeof HugeiconsIcon>,
-	"icon"
-> {
-	icon?: typeof GitbookFreeIcons
-	strokeWidth?: number
-	ref?: React.Ref<SVGSVGElement>
+export interface LogoIconProps extends React.ComponentPropsWithoutRef<"div"> {
+	size?: number
 }
 
 export const LogoIcon = React.memo(
-	({ icon, strokeWidth = 2, className, ref, ...props }: LogoIconProps) => {
-		const iconToUse = icon || GitbookFreeIcons
+	({ size = 24, className, ...props }: LogoIconProps) => {
 		return (
-			<HugeiconsIcon
-				ref={ref}
-				icon={iconToUse}
-				strokeWidth={strokeWidth}
-				className={cn("text-primary", className)}
-				{...props}
-			/>
+			<div className={cn("relative shrink-0", className)} style={{ width: size, height: size }} {...props}>
+				<Image
+					src="/logo/stlukes.png"
+					alt="St. Luke's Logo"
+					fill
+					className="object-contain"
+				/>
+			</div>
 		)
 	}
 )
@@ -38,8 +32,6 @@ export interface LogoProps {
 	text?: string
 	href?: Route<string>
 	showIcon?: boolean
-	icon?: typeof GitbookFreeIcons
-	strokeWidth?: number
 	size?: ButtonVariants["size"]
 	variant?: ButtonVariants["variant"]
 	className?: string
@@ -51,13 +43,11 @@ export function Logo({
 	size = "lg",
 	variant = "link",
 	showIcon = true,
-	icon,
-	strokeWidth,
 	className,
 }: LogoProps) {
 	const content = (
 		<>
-			{showIcon && <LogoIcon icon={icon} strokeWidth={strokeWidth} data-icon="inline-start" />}
+			{showIcon && <LogoIcon size={32} data-icon="inline-start" />}
 			{text}
 		</>
 	)

@@ -1,8 +1,13 @@
-import { getSession } from "@/services/better-auth/auth-server"
-import { HomeCtaButton } from "@/features/home/home-cta-button"
-import { NavigationLinks } from "@/features/home/navigation-links"
+import { LandingPage } from "@/features/landing/landing-page"
 
-export default async function Home() {
+export default function Home() {
+	return <LandingPage />
+}
+
+// Legacy home content preserved below (unused)
+async function _LegacyHome() {
+	// eslint-disable-next-line @typescript-eslint/no-var-requires
+	const { getSession } = await import("@/services/better-auth/auth-server")
 	const session = await getSession()
 	const isLoggedIn = !!session
 
