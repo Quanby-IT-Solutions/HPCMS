@@ -298,9 +298,133 @@ function ClinicalTab() {
 // TAB: DOCUMENTS & PROGRAMS (Simplified for dense layout)
 // ----------------------------------------------------------------------
 function DocumentsTab() {
-	return <div className="text-muted-foreground p-8 text-center text-xs italic">No documents attached to this patient.</div>
+	const documents = [
+		{ id: "doc-1", name: "LOA Request Form", type: "LOA", uploadedBy: "Maria Santos", date: "2026-04-25", size: "245 KB", status: "Verified" },
+		{ id: "doc-2", name: "HMO Reply — Additional Docs Required", type: "Correspondence", uploadedBy: "PhilHealth", date: "2026-04-28", size: "124 KB", status: "Pending Review" },
+		{ id: "doc-3", name: "Lab Results — HbA1c Panel", type: "Lab Result", uploadedBy: "St. Luke's Lab", date: "2026-04-20", size: "89 KB", status: "Verified" },
+		{ id: "doc-4", name: "Prescription — Metformin 500mg", type: "Prescription", uploadedBy: "Dr. Garcia", date: "2026-03-15", size: "32 KB", status: "Verified" },
+		{ id: "doc-5", name: "Insurance Member ID Card", type: "ID Document", uploadedBy: "Maria Santos", date: "2026-01-10", size: "1.2 MB", status: "Verified" },
+	]
+
+	return (
+		<div className="flex flex-col gap-3">
+			{documents.map((doc, i) => {
+				const isPending = doc.status === "Pending Review"
+				return (
+					<motion.div
+						key={doc.id}
+						initial={{ opacity: 0, y: 5 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{ duration: 0.15, delay: i * 0.04 }}
+						className="bg-card border-border group flex items-center justify-between rounded-lg border px-4 py-3 transition-colors hover:border-primary/40"
+					>
+						<div className="flex flex-col gap-0.5">
+							<div className="flex items-center gap-2">
+								<span className="text-foreground text-xs font-medium">{doc.name}</span>
+								<span className={`rounded px-1.5 py-0.5 text-[10px] font-bold ${isPending ? "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400" : "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400"}`}>
+									{doc.status}
+								</span>
+							</div>
+							<div className="text-muted-foreground flex items-center gap-3 text-[10px]">
+								<span>{doc.type}</span>
+								<span>·</span>
+								<span>{doc.uploadedBy}</span>
+								<span>·</span>
+								<span>{doc.date}</span>
+								<span>·</span>
+								<span>{doc.size}</span>
+							</div>
+						</div>
+						<button className="text-primary text-[10px] font-medium opacity-0 transition-opacity group-hover:opacity-100">
+							View
+						</button>
+					</motion.div>
+				)
+			})}
+		</div>
+	)
 }
 
 function ProgramsTab() {
-	return <div className="text-muted-foreground p-8 text-center text-xs italic">No active care programs.</div>
+	const programs = [
+		{
+			id: "prog-1",
+			name: "Cardiac Rehabilitation",
+			status: "Active",
+			coordinator: "J. Reyes",
+			startDate: "2026-03-01",
+			nextSession: "2026-05-05",
+			progress: 65,
+		},
+		{
+			id: "prog-2",
+			name: "Hypertension Management",
+			status: "Active",
+			coordinator: "A. Santos",
+			startDate: "2026-04-15",
+			nextSession: "2026-05-08",
+			progress: 30,
+		},
+		{
+			id: "prog-3",
+			name: "Diabetes Education Program",
+			status: "Completed",
+			coordinator: "Dr. Garcia",
+			startDate: "2025-11-01",
+			nextSession: null,
+			progress: 100,
+		},
+	]
+
+	return (
+		<div className="flex flex-col gap-3">
+			{programs.map((prog, i) => {
+				const isCompleted = prog.status === "Completed"
+				return (
+					<motion.div
+						key={prog.id}
+						initial={{ opacity: 0, y: 5 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{ duration: 0.15, delay: i * 0.04 }}
+						className="bg-card border-border group rounded-lg border p-4 transition-colors hover:border-primary/40"
+					>
+						<div className="flex items-center justify-between">
+							<div className="flex items-center gap-2">
+								<span className="text-foreground text-sm font-semibold">{prog.name}</span>
+								<span className={`rounded px-1.5 py-0.5 text-[10px] font-bold ${isCompleted ? "bg-muted text-muted-foreground" : "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400"}`}>
+									{prog.status}
+								</span>
+							</div>
+							<button className="text-primary text-[10px] font-medium opacity-0 transition-opacity group-hover:opacity-100">
+								View Details
+							</button>
+						</div>
+						<div className="text-muted-foreground mt-1.5 flex items-center gap-3 text-[10px]">
+							<span>Coordinator: {prog.coordinator}</span>
+							<span>·</span>
+							<span>Started: {prog.startDate}</span>
+							{prog.nextSession && (
+								<>
+									<span>·</span>
+									<span>Next: {prog.nextSession}</span>
+								</>
+							)}
+						</div>
+						{/* Progress bar */}
+						<div className="mt-3 flex items-center gap-2">
+							<div className="bg-muted h-1.5 flex-1 rounded-full overflow-hidden">
+								<motion.div
+									initial={{ width: 0 }}
+									animate={{ width: `${prog.progress}%` }}
+									transition={{ duration: 0.5, delay: i * 0.1 }}
+									className={`h-full rounded-full ${isCompleted ? "bg-muted-foreground" : "bg-primary"}`}
+								/>
+							</div>
+							<span className="text-muted-foreground text-[10px] tabular-nums">{prog.progress}%</span>
+						</div>
+					</motion.div>
+				)
+			})}
+		</div>
+	)
 }

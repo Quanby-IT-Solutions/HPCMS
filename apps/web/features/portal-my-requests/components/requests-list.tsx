@@ -8,18 +8,24 @@ import { buttonVariants } from "@/core/components/ui/button"
 import { Card, CardContent } from "@/core/components/ui/card"
 import { Skeleton } from "@/core/components/ui/skeleton"
 import { cn } from "@/core/lib/utils"
-import type { CaseStatus } from "@repo/contracts"
+
 
 import { useMyRequestsQuery } from "../api/cases.hooks"
 
-const STATUS_BADGE: Record<CaseStatus, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
+const STATUS_BADGE: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
 	submitted: { label: "Submitted", variant: "default" },
 	in_review: { label: "In Review", variant: "secondary" },
+	pending_action: { label: "Pending Action", variant: "secondary" },
+	pending_info: { label: "Pending Info", variant: "secondary" },
+	escalated: { label: "Escalated", variant: "destructive" },
 	approved: { label: "Approved", variant: "default" },
+	resolved: { label: "Resolved", variant: "default" },
 	rejected: { label: "Rejected", variant: "destructive" },
 	closed: { label: "Closed", variant: "outline" },
 	withdrawn: { label: "Withdrawn", variant: "outline" },
 }
+
+const FALLBACK_BADGE = { label: "Unknown", variant: "outline" as const }
 
 interface RequestsListProps {
 	hasLinkedPatient: boolean
@@ -75,7 +81,7 @@ export function RequestsList({ hasLinkedPatient }: RequestsListProps) {
 	return (
 		<div className="flex flex-col gap-3">
 			{data.items.map(item => {
-				const badge = STATUS_BADGE[item.status]
+				const badge = STATUS_BADGE[item.status] ?? FALLBACK_BADGE
 				return (
 					<Link key={item.id} href={`/portal/requests/${item.caseRef}`}>
 						<Card className="hover:bg-accent/50 cursor-pointer transition-colors">

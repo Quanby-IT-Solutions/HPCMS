@@ -9,7 +9,7 @@ import { Badge } from "@/core/components/ui/badge"
 import { Button } from "@/core/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/core/components/ui/card"
 import { Skeleton } from "@/core/components/ui/skeleton"
-import type { CaseAttachment, CaseEvent, CaseStatus } from "@repo/contracts"
+import type { CaseAttachment, CaseEvent } from "@repo/contracts"
 
 import Link from "next/link"
 
@@ -17,14 +17,20 @@ import { useCaseQuery, useSignDownloadQuery } from "../api/cases.hooks"
 import { StatusStepper } from "./status-stepper"
 import { WithdrawConfirmDialog } from "./withdraw-confirm-dialog"
 
-const STATUS_BADGE: Record<CaseStatus, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
+const STATUS_BADGE: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
 	submitted: { label: "Submitted", variant: "default" },
 	in_review: { label: "In Review", variant: "secondary" },
+	pending_action: { label: "Pending Action", variant: "secondary" },
+	pending_info: { label: "Pending Info", variant: "secondary" },
+	escalated: { label: "Escalated", variant: "destructive" },
 	approved: { label: "Approved", variant: "default" },
+	resolved: { label: "Resolved", variant: "default" },
 	rejected: { label: "Rejected", variant: "destructive" },
 	closed: { label: "Closed", variant: "outline" },
 	withdrawn: { label: "Withdrawn", variant: "outline" },
 }
+
+const FALLBACK_BADGE = { label: "Unknown", variant: "outline" as const }
 
 const EVENT_LABELS: Record<string, string> = {
 	submitted: "Request submitted",
@@ -34,6 +40,7 @@ const EVENT_LABELS: Record<string, string> = {
 	rejected: "Request rejected",
 	closed: "Case closed",
 	withdrawn: "Request withdrawn",
+	status_change: "Status updated",
 	note_added: "Note added",
 }
 
@@ -134,7 +141,7 @@ export function CaseDetail({ caseRef }: CaseDetailProps) {
 		return null
 	}
 
-	const badge = STATUS_BADGE[data.status]
+	const badge = STATUS_BADGE[data.status] ?? FALLBACK_BADGE
 	const canWithdraw = data.status === "submitted" || data.status === "in_review"
 
 	return (

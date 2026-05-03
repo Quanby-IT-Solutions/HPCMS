@@ -54,34 +54,42 @@ export function useSupervisorCaseGetQuery(ref: string) {
 	return useQuery({
 		...orpc.cases.get.queryOptions({ input: { ref } }),
 		enabled: !!ref,
-		placeholderData: (): CaseDetail => ({ ...PLACEHOLDER_CASE_DETAIL, caseRef: ref }),
+		initialData: { ...PLACEHOLDER_CASE_DETAIL, caseRef: ref } as never,
+		retry: false,
 	})
 }
 
 export function useSupervisorCaseListQuery(params: Record<string, unknown> = {}) {
 	return useQuery({
 		...orpc.cases.list.queryOptions({ input: params }),
-		placeholderData: () => ({
-			items: [PLACEHOLDER_CASE, { ...PLACEHOLDER_CASE, id: "case-2", caseRef: "BILL-2026-00043", caseType: "billing", status: "submitted" as const, priority: "medium" as const, patientId: "pat-2" }],
-			total: 2,
+		initialData: {
+			cases: [
+				{ ...PLACEHOLDER_CASE, patientName: "Maria Santos" },
+				{ ...PLACEHOLDER_CASE, id: "case-2", caseRef: "BILL-2026-00043", caseType: "billing", status: "submitted" as const, priority: "medium" as const, patientId: "pat-2", patientName: "Juan Dela Cruz" },
+				{ ...PLACEHOLDER_CASE, id: "case-3", caseRef: "LOA-2026-00135", caseType: "loa", status: "submitted" as const, priority: "urgent" as const, patientId: "pat-3", patientName: "Ana Reyes" },
+				{ ...PLACEHOLDER_CASE, id: "case-4", caseRef: "COMP-2026-00012", caseType: "complaint", status: "in_review" as const, priority: "high" as const, patientId: "pat-4", patientName: "Carlo Bautista" },
+				{ ...PLACEHOLDER_CASE, id: "case-5", caseRef: "REF-2026-00099", caseType: "referral", status: "submitted" as const, priority: "low" as const, patientId: "pat-1", patientName: "Maria Santos" },
+			],
+			total: 5,
 			page: 1,
 			limit: 25,
-		}),
+		} as never,
+		retry: false,
 	})
 }
 
 export function useCaseTypesForFormQuery() {
-	return useQuery(
-		orpc.staffAdmin.caseTypes.list.queryOptions({
-			placeholderData: {
-				items: [
-					{ id: "loa", name: "LOA Request", description: null, defaultPriority: "medium" as const, slaHours: 48, defaultTeam: null, requiredFields: [], optionalFields: [], defaultRoutingRuleId: null, status: "active" as const },
-					{ id: "billing", name: "Billing Inquiry", description: null, defaultPriority: "low" as const, slaHours: 72, defaultTeam: null, requiredFields: [], optionalFields: [], defaultRoutingRuleId: null, status: "active" as const },
-					{ id: "complaint", name: "Complaint", description: null, defaultPriority: "medium" as const, slaHours: 24, defaultTeam: null, requiredFields: [], optionalFields: [], defaultRoutingRuleId: null, status: "active" as const },
-					{ id: "appointment", name: "Appointment", description: null, defaultPriority: "low" as const, slaHours: 96, defaultTeam: null, requiredFields: [], optionalFields: [], defaultRoutingRuleId: null, status: "active" as const },
-					{ id: "referral", name: "Referral", description: null, defaultPriority: "medium" as const, slaHours: 48, defaultTeam: null, requiredFields: [], optionalFields: [], defaultRoutingRuleId: null, status: "active" as const },
-				],
-			},
-		})
-	)
+	return useQuery({
+		...orpc.staffAdmin.caseTypes.list.queryOptions(),
+		initialData: {
+			items: [
+				{ id: "loa", name: "LOA Request", description: null, defaultPriority: "medium" as const, slaHours: 48, defaultTeam: null, requiredFields: [], optionalFields: [], defaultRoutingRuleId: null, status: "active" as const },
+				{ id: "billing", name: "Billing Inquiry", description: null, defaultPriority: "low" as const, slaHours: 72, defaultTeam: null, requiredFields: [], optionalFields: [], defaultRoutingRuleId: null, status: "active" as const },
+				{ id: "complaint", name: "Complaint", description: null, defaultPriority: "medium" as const, slaHours: 24, defaultTeam: null, requiredFields: [], optionalFields: [], defaultRoutingRuleId: null, status: "active" as const },
+				{ id: "appointment", name: "Appointment", description: null, defaultPriority: "low" as const, slaHours: 96, defaultTeam: null, requiredFields: [], optionalFields: [], defaultRoutingRuleId: null, status: "active" as const },
+				{ id: "referral", name: "Referral", description: null, defaultPriority: "medium" as const, slaHours: 48, defaultTeam: null, requiredFields: [], optionalFields: [], defaultRoutingRuleId: null, status: "active" as const },
+			],
+		} as never,
+		retry: false,
+	})
 }

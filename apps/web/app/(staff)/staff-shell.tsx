@@ -1,7 +1,7 @@
 import { notFound, redirect } from "next/navigation"
 
 import { SignOutButton } from "@/features/auth/components/sign-out-button"
-import { NotificationsBell } from "@/features/staff-notifications/components/notifications-bell"
+import { NotificationsBellClient } from "@/features/staff-notifications/components/notifications-bell-client"
 import { AppShell } from "@/features/shell/components/app-shell"
 import { getSession } from "@/services/better-auth/auth-server"
 
@@ -59,7 +59,7 @@ export async function StaffShell({
 				name: session.user.name,
 				role,
 			}}
-			notificationsSlot={<NotificationsBell />}
+			notificationsSlot={<NotificationsBellClient />}
 			signOutSlot={<SignOutButton />}
 		>
 			{children}

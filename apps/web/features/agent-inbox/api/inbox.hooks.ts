@@ -141,12 +141,13 @@ export function useInboxListQuery(filters: InboxFilters = {}) {
 			},
 		}),
 		staleTime: 15 * 1000,
-		placeholderData: () => ({
+		initialData: {
 			items: mockItems(),
 			total: 4,
 			page: filters.page ?? 1,
 			pageSize: filters.limit ?? 25,
-		}),
+		} as never,
+		retry: false,
 	})
 }
 
@@ -187,7 +188,8 @@ export function useInboxItemQuery(id: string | null) {
 	return useQuery({
 		...orpc.inbox.get.queryOptions({ input: { id: id ?? "" } }),
 		enabled: !!id,
-		placeholderData: () => (id ? buildPlaceholderItem(id) : undefined),
+		initialData: (id ? buildPlaceholderItem(id) : undefined) as never,
+		retry: false,
 	})
 }
 

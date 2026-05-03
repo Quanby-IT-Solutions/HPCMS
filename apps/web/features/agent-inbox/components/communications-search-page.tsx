@@ -63,6 +63,17 @@ function buildMockRows(): InboxSearchResultRow[] {
 			sessionId: "sess_mock_001",
 		},
 		{
+			id: "ix-2",
+			channel: "phone",
+			patientName: "Juan Dela Cruz",
+			caseRef: "BILL-2026-00043",
+			receivedAt: new Date(now - 4 * 60 * 60 * 1000),
+			snippet: "Patient called asking about preferred provider list for outpatient coverage…",
+			agentName: "A. Santos",
+			actorIp: "192.168.1.22",
+			sessionId: "sess_mock_002",
+		},
+		{
 			id: "ix-3",
 			channel: "social_media",
 			patientName: "Anonymous",
@@ -72,6 +83,39 @@ function buildMockRows(): InboxSearchResultRow[] {
 			agentName: null,
 			actorIp: null,
 			sessionId: null,
+		},
+		{
+			id: "ix-4",
+			channel: "portal_chat",
+			patientName: "Anna Tan",
+			caseRef: null,
+			receivedAt: new Date(now - 90 * 60 * 1000),
+			snippet: "Hi, I wanted to ask about my medication schedule…",
+			agentName: "J. Reyes",
+			actorIp: "192.168.1.10",
+			sessionId: "sess_mock_003",
+		},
+		{
+			id: "ix-5",
+			channel: "email",
+			patientName: "Carlo Bautista",
+			caseRef: "COMP-2026-00012",
+			receivedAt: new Date(now - 2 * 24 * 60 * 60 * 1000),
+			snippet: "Following up on complaint filed regarding billing discrepancy…",
+			agentName: "M. Garcia",
+			actorIp: "192.168.1.35",
+			sessionId: "sess_mock_004",
+		},
+		{
+			id: "ix-6",
+			channel: "phone",
+			patientName: "Ana Reyes",
+			caseRef: "LOA-2026-00135",
+			receivedAt: new Date(now - 48 * 60 * 60 * 1000),
+			snippet: "Patient inquired about LOA approval timeline and required lab work…",
+			agentName: "A. Santos",
+			actorIp: "192.168.1.22",
+			sessionId: "sess_mock_005",
 		},
 	]
 }
@@ -134,13 +178,13 @@ export function CommunicationsSearchPage() {
 				limit: PAGE_SIZE,
 			},
 		}),
-		enabled: submittedQuery.length > 0,
-		placeholderData: () => ({
+		initialData: {
 			rows: buildMockRows(),
-			total: 2,
+			total: 6,
 			page,
 			pageSize: PAGE_SIZE,
-		}),
+		} as never,
+		retry: false,
 	})
 
 	function handleSubmit(e: React.FormEvent) {
@@ -229,9 +273,7 @@ export function CommunicationsSearchPage() {
 				</Button>
 			</div>
 
-			{submittedQuery.length === 0 ? (
-				<p className="text-muted-foreground text-sm italic">Enter a query to begin.</p>
-			) : isLoading || !data ? (
+			{isLoading || !data ? (
 				<div className="flex flex-col gap-2">
 					{Array.from({ length: 3 }).map((_, i) => (
 						<Skeleton key={i} className="h-12 w-full" />

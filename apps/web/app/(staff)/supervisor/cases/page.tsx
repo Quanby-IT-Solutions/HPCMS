@@ -52,11 +52,11 @@ export default function SupervisorCasesPage() {
 						</TableRow>
 					</TableHeader>
 					<TableBody>
-						{cases.filter(c => !q || (c.ref as string).includes(q) || (c.patientName as string)?.toLowerCase().includes(q.toLowerCase())).map(c => (
-							<TableRow key={c.ref as string}>
+						{cases.filter(c => !q || (c.caseRef as string).includes(q) || (c.patientName as string)?.toLowerCase().includes(q.toLowerCase())).map(c => (
+							<TableRow key={c.caseRef as string}>
 								<TableCell>
-									<Link href={SUPERVISOR_ROUTES.caseDetail(c.ref as string)} className="font-mono text-xs hover:underline">
-										{c.ref as string}
+									<Link href={SUPERVISOR_ROUTES.caseDetail(c.caseRef as string)} className="font-mono text-xs hover:underline">
+										{c.caseRef as string}
 									</Link>
 								</TableCell>
 								<TableCell className="text-sm">{c.caseType as string}</TableCell>

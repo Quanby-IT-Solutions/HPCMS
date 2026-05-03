@@ -10,7 +10,13 @@ export function usePatientProgramsQuery(patientId: string) {
 	return useQuery({
 		...orpc.programs.listForPatient.queryOptions({ input: { patientId } }),
 		enabled: !!patientId,
-		placeholderData: () => ({ enrollments: [] }),
+		initialData: {
+			enrollments: [
+				{ enrollmentId: "enr-1", programName: "Cardiac Rehab", status: "active" as const, startDate: new Date("2026-03-01"), coordinatorName: "J. Reyes" },
+				{ enrollmentId: "enr-3", programName: "Hypertension Management", status: "active" as const, startDate: new Date("2026-04-15"), coordinatorName: "A. Santos" },
+			],
+		} as never,
+		retry: false,
 	})
 }
 
@@ -36,7 +42,7 @@ export function useEnrollmentDetailQuery(enrollmentId: string) {
 	return useQuery({
 		...orpc.supervisor.programs.getEnrollment.queryOptions({ input: { enrollmentId } }),
 		enabled: !!enrollmentId,
-		placeholderData: (): EnrollmentDetail => ({
+		initialData: {
 			enrollmentId,
 			patientId: "pat-1",
 			patientName: "Maria Santos",
@@ -48,14 +54,15 @@ export function useEnrollmentDetailQuery(enrollmentId: string) {
 			coordinatorName: "J. Reyes",
 			notes: null,
 			statusHistory: [],
-		}),
+		} as never,
+		retry: false,
 	})
 }
 
 export function useEnrollmentListQuery(params: Record<string, unknown> = {}) {
 	return useQuery({
 		...orpc.supervisor.programs.listAll.queryOptions({ input: params }),
-		placeholderData: () => ({
+		initialData: {
 			rows: [
 				{ enrollmentId: "enr-1", patientId: "pat-1", patientName: "Maria Santos", programName: "Cardiac Rehab", status: "active" as const, startDate: new Date("2026-03-01"), coordinatorName: "J. Reyes" },
 				{ enrollmentId: "enr-2", patientId: "pat-2", patientName: "Juan Dela Cruz", programName: "Diabetes Mgmt.", status: "suspended" as const, startDate: new Date("2026-01-15"), coordinatorName: "A. Santos" },
@@ -63,6 +70,7 @@ export function useEnrollmentListQuery(params: Record<string, unknown> = {}) {
 			total: 2,
 			page: 1,
 			pageSize: 25,
-		}),
+		} as never,
+		retry: false,
 	})
 }

@@ -35,15 +35,24 @@ export function RoleMatrixPage() {
 	const query = useRoleMatrixQuery()
 	const updateMatrix = useUpdateRoleMatrixMutation()
 
-	const [localValues, setLocalValues] = React.useState<Record<string, Record<string, boolean>>>({})
+	const matrixData = query.data
+
+	const [localValues, setLocalValues] = React.useState<Record<string, Record<string, boolean>>>(() => {
+		if (!matrixData) return {}
+		const copy: Record<string, Record<string, boolean>> = {}
+		for (const row of matrixData.rows) {
+			copy[row.role] = { ...row.permissions }
+		}
+		return copy
+	})
 	const [pendingDiffs, setPendingDiffs] = React.useState<PermissionDiff[]>([])
 	const [selectedRole, setSelectedRole] = React.useState<string | null>(null)
 
-	const matrixData = query.data
-
-	// Sync localValues when query data arrives
+	// Re-sync localValues when real API data arrives (replacing initialData)
+	const lastSyncRef = React.useRef(matrixData)
 	React.useEffect(() => {
-		if (!matrixData) return
+		if (!matrixData || matrixData === lastSyncRef.current) return
+		lastSyncRef.current = matrixData
 		const copy: Record<string, Record<string, boolean>> = {}
 		for (const row of matrixData.rows) {
 			copy[row.role] = { ...row.permissions }

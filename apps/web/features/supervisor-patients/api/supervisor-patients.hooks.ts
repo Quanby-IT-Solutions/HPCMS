@@ -43,18 +43,39 @@ export function usePatientSearchQuery(q: string) {
 	return useQuery({
 		...orpc.patient.search.queryOptions({ input: { query: q || "a" } }),
 		enabled: q.length > 1,
-		placeholderData: (): Patient[] => [
-			PLACEHOLDER_PATIENT,
-			{
-				...PLACEHOLDER_PATIENT,
-				id: "pat-2",
-				fullName: "Juan Dela Cruz",
-				lastName: "Dela Cruz",
-				mrn: "MRN-002",
-				sexAtBirth: "male",
-				dateOfBirth: "1975-09-22",
-			},
-		],
+		initialData: {
+			patients: [
+				PLACEHOLDER_PATIENT,
+				{
+					...PLACEHOLDER_PATIENT,
+					id: "pat-2",
+					fullName: "Juan Dela Cruz",
+					lastName: "Dela Cruz",
+					mrn: "MRN-002",
+					sexAtBirth: "male",
+					dateOfBirth: "1975-09-22",
+				},
+				{
+					...PLACEHOLDER_PATIENT,
+					id: "pat-3",
+					fullName: "Ana Reyes",
+					lastName: "Reyes",
+					mrn: "MRN-003",
+					sexAtBirth: "female",
+					dateOfBirth: "1990-11-08",
+				},
+				{
+					...PLACEHOLDER_PATIENT,
+					id: "pat-4",
+					fullName: "Carlo Bautista",
+					lastName: "Bautista",
+					mrn: "MRN-004",
+					sexAtBirth: "male",
+					dateOfBirth: "1968-03-30",
+				},
+			],
+		} as never,
+		retry: false,
 	})
 }
 
@@ -62,6 +83,7 @@ export function usePatientGetQuery(id: string) {
 	return useQuery({
 		...orpc.patient.get.queryOptions({ input: { id } }),
 		enabled: !!id,
-		placeholderData: (): Patient => ({ ...PLACEHOLDER_PATIENT, id }),
+		initialData: { ...PLACEHOLDER_PATIENT, id } as never,
+		retry: false,
 	})
 }

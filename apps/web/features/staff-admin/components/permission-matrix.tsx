@@ -49,6 +49,19 @@ export function PermissionMatrix({
 		return copy
 	})
 
+	// Re-sync when the upstream values prop changes (e.g. initial data hydration)
+	const valuesRef = React.useRef(values)
+	React.useEffect(() => {
+		if (values === valuesRef.current) return
+		valuesRef.current = values
+		const copy: Record<string, Record<string, boolean>> = {}
+		for (const role of roles) {
+			copy[role] = { ...(values[role] ?? {}) }
+		}
+		setLocal(copy)
+		setDiffs([])
+	}, [values, roles])
+
 	const [diffs, setDiffs] = React.useState<PermissionDiff[]>([])
 
 	function toggle(role: string, permKey: string) {

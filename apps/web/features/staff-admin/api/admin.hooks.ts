@@ -33,7 +33,7 @@ export function useAdminUsersQuery(params?: {
 		...orpc.staffAdmin.users.list.queryOptions({
 			input: { page: params?.page ?? 1, limit: params?.limit ?? 20, role: params?.role, query: params?.query },
 		}),
-		placeholderData: {
+		initialData: {
 			items: [
 				{ id: "u1", name: "System Admin", email: "system@hpcms.local", role: "system_admin" as const, emailVerified: true, tenantId: "t1", createdAt: new Date(), updatedAt: new Date() },
 				{ id: "u2", name: "Tenant Admin", email: "admin@hpcms.local", role: "tenant_admin" as const, emailVerified: true, tenantId: "t1", createdAt: new Date(), updatedAt: new Date() },
@@ -45,7 +45,8 @@ export function useAdminUsersQuery(params?: {
 			total: 6,
 			page: 1,
 			limit: 20,
-		},
+		} as never,
+		retry: false,
 	})
 }
 
@@ -53,7 +54,7 @@ export function useAdminUserQuery(userId: string) {
 	return useQuery({
 		...orpc.staffAdmin.users.get.queryOptions({ input: { userId } }),
 		enabled: !!userId,
-		placeholderData: {
+		initialData: {
 			id: userId,
 			name: "Loading...",
 			email: "",
@@ -69,7 +70,8 @@ export function useAdminUserQuery(userId: string) {
 			tenants: [],
 			changeHistory: [],
 			openCaseCount: 0,
-		},
+		} as never,
+		retry: false,
 	})
 }
 
@@ -77,7 +79,8 @@ export function useUserSessionsQuery(userId: string) {
 	return useQuery({
 		...orpc.staffAdmin.users.sessions.queryOptions({ input: { userId } }),
 		enabled: !!userId,
-		placeholderData: { sessions: [] },
+		initialData: { sessions: [] } as never,
+		retry: false,
 	})
 }
 
@@ -139,7 +142,8 @@ export function useAuditLogsQuery(params?: {
 		...orpc.staffAdmin.audit.list.queryOptions({
 			input: { page: params?.page ?? 1, limit: params?.limit ?? 20, targetType: params?.targetType, actorUserId: params?.actorUserId, actionKey: params?.actionKey, dateFrom: params?.dateFrom, dateTo: params?.dateTo },
 		}),
-		placeholderData: { items: [], total: 0, page: 1, limit: 20 },
+		initialData: { items: [], total: 0, page: 1, limit: 20 } as never,
+		retry: false,
 	})
 }
 
@@ -148,17 +152,18 @@ export function useAuditLogsQuery(params?: {
 export function useRoleMatrixQuery() {
 	return useQuery({
 		...orpc.staffAdmin.roles.getMatrix.queryOptions(),
-		placeholderData: {
+		initialData: {
 			rows: [
-				{ role: "system_admin" as const, permissions: { "case.create": true, "case.escalate": true, "audit.view": true, "tenant.assign": true } },
-				{ role: "tenant_admin" as const, permissions: { "case.create": true, "case.escalate": false, "audit.view": true, "tenant.assign": true } },
-				{ role: "case_supervisor" as const, permissions: { "case.create": true, "case.escalate": true, "audit.view": false, "tenant.assign": false } },
-				{ role: "case_agent" as const, permissions: { "case.create": true, "case.escalate": false, "audit.view": false, "tenant.assign": false } },
-				{ role: "clinician" as const, permissions: { "case.create": false, "case.escalate": false, "audit.view": false, "tenant.assign": false } },
-				{ role: "patient" as const, permissions: { "case.create": false, "case.escalate": false, "audit.view": false, "tenant.assign": false } },
+				{ role: "system_admin" as const, permissions: { "case.create": true, "case.view": true, "case.update": true, "case.escalate": true, "case.reassign": true, "audit.view": true, "tenant.manage": true, "user.manage": true, "role.manage": true, "settings.manage": true } },
+				{ role: "tenant_admin" as const, permissions: { "case.create": true, "case.view": true, "case.update": true, "case.escalate": false, "case.reassign": true, "audit.view": true, "tenant.manage": true, "user.manage": true, "role.manage": false, "settings.manage": true } },
+				{ role: "case_supervisor" as const, permissions: { "case.create": true, "case.view": true, "case.update": true, "case.escalate": true, "case.reassign": true, "audit.view": true, "tenant.manage": false, "user.manage": false, "role.manage": false, "settings.manage": false } },
+				{ role: "case_agent" as const, permissions: { "case.create": true, "case.view": true, "case.update": true, "case.escalate": false, "case.reassign": false, "audit.view": false, "tenant.manage": false, "user.manage": false, "role.manage": false, "settings.manage": false } },
+				{ role: "clinician" as const, permissions: { "case.create": false, "case.view": true, "case.update": false, "case.escalate": false, "case.reassign": false, "audit.view": false, "tenant.manage": false, "user.manage": false, "role.manage": false, "settings.manage": false } },
+				{ role: "patient" as const, permissions: { "case.create": true, "case.view": true, "case.update": false, "case.escalate": false, "case.reassign": false, "audit.view": false, "tenant.manage": false, "user.manage": false, "role.manage": false, "settings.manage": false } },
 			],
-			permKeys: ["case.create", "case.escalate", "audit.view", "tenant.assign"],
-		},
+			permKeys: ["case.create", "case.view", "case.update", "case.escalate", "case.reassign", "audit.view", "tenant.manage", "user.manage", "role.manage", "settings.manage"],
+		} as never,
+		retry: false,
 	})
 }
 
@@ -177,12 +182,13 @@ export function useUpdateRoleMatrixMutation() {
 export function useSecurityPolicyQuery() {
 	return useQuery({
 		...orpc.staffAdmin.security.getPolicy.queryOptions(),
-		placeholderData: {
+		initialData: {
 			passwordPolicy: { minLength: 12, requireUpper: true, requireLower: true, requireDigit: true, requireSymbol: true, expirationDays: 90, reuseHistoryCount: 5 },
 			sessionPolicy: { idleTimeoutMinutes: { system_admin: 30, tenant_admin: 60, case_supervisor: 120, case_agent: 120 }, warningBannerOffsetMinutes: 5, forceLogoutIdle: true },
 			mfaPolicy: { enforcement: { system_admin: "required" as const, tenant_admin: "required" as const, case_supervisor: "optional" as const, case_agent: "optional" as const }, allowedMethods: ["totp" as const, "email" as const] },
 			concurrencyPolicy: { maxSessionsPerRole: { system_admin: 2, tenant_admin: 3, case_supervisor: 5, case_agent: 5 }, singleSessionRoles: [] },
-		},
+		} as never,
+		retry: false,
 	})
 }
 
@@ -199,7 +205,8 @@ export function useUpdateSecurityPolicyMutation() {
 export function useActiveSessionsQuery() {
 	return useQuery({
 		...orpc.staffAdmin.security.getSessions.queryOptions(),
-		placeholderData: { sessions: [] },
+		initialData: { sessions: [] } as never,
+		retry: false,
 	})
 }
 
@@ -228,11 +235,12 @@ export function useResetMfaMutation() {
 export function useTenantsQuery() {
 	return useQuery({
 		...orpc.staffAdmin.tenants.list.queryOptions(),
-		placeholderData: {
+		initialData: {
 			tenants: [
 				{ id: "t1", shortCode: "QC", name: "HPCMS Hospital QC", status: "active" as const, userCount: 6, caseCount: 12 },
 			],
-		},
+		} as never,
+		retry: false,
 	})
 }
 
@@ -240,7 +248,7 @@ export function useTenantQuery(tenantId: string) {
 	return useQuery({
 		...orpc.staffAdmin.tenants.get.queryOptions({ input: { tenantId } }),
 		enabled: !!tenantId,
-		placeholderData: {
+		initialData: {
 			id: tenantId,
 			shortCode: "QC",
 			name: "HPCMS Hospital QC",
@@ -251,14 +259,16 @@ export function useTenantQuery(tenantId: string) {
 			contactEmail: null,
 			users: [],
 			effectiveAccess: [],
-		},
+		} as never,
+		retry: false,
 	})
 }
 
 export function useEffectiveAccessMatrixQuery() {
 	return useQuery({
 		...orpc.staffAdmin.tenants.effectiveMatrix.queryOptions(),
-		placeholderData: { rows: [] },
+		initialData: { rows: [] } as never,
+		retry: false,
 	})
 }
 
@@ -277,7 +287,7 @@ export function useAssignUserTenantMutation() {
 export function useCaseTypesQuery() {
 	return useQuery({
 		...orpc.staffAdmin.caseTypes.list.queryOptions(),
-		placeholderData: {
+		initialData: {
 			items: [
 				{
 					id: "ct1",
@@ -304,7 +314,8 @@ export function useCaseTypesQuery() {
 					status: "active" as const,
 				},
 			],
-		},
+		} as never,
+		retry: false,
 	})
 }
 
@@ -353,7 +364,15 @@ export function useReactivateCaseTypeMutation() {
 export function useRoutingRulesQuery() {
 	return useQuery({
 		...orpc.staffAdmin.routingRules.list.queryOptions(),
-		placeholderData: { rules: [] },
+		initialData: {
+			rules: [
+				{ id: "rr1", name: "LOA → LOA Triage Team", order: 1, conditions: [{ field: "caseType" as const, operator: "equals" as const, value: "loa" }], action: { type: "assign_team" as const, value: "LOA Triage" }, active: true },
+				{ id: "rr2", name: "Urgent → Supervisor Escalation", order: 2, conditions: [{ field: "priority" as const, operator: "equals" as const, value: "urgent" }], action: { type: "escalate" as const, value: "case_supervisor" }, active: true },
+				{ id: "rr3", name: "Billing → Billing Team", order: 3, conditions: [{ field: "caseType" as const, operator: "equals" as const, value: "billing" }], action: { type: "assign_team" as const, value: "Billing" }, active: true },
+				{ id: "rr4", name: "Catch-all → General Queue", order: 4, conditions: [], action: { type: "assign_team" as const, value: "General" }, active: false },
+			],
+		} as never,
+		retry: false,
 	})
 }
 
@@ -400,7 +419,15 @@ export function useToggleRoutingRuleMutation() {
 export function useRoutingLogQuery() {
 	return useQuery({
 		...orpc.staffAdmin.routingRules.log.queryOptions(),
-		placeholderData: { rows: [] },
+		initialData: {
+			rows: [
+				{ caseId: "LOA-2026-00128", matchedRuleName: "LOA → LOA Triage Team", assignedTeam: "LOA Triage", timestamp: "2026-05-02T08:30:00Z" },
+				{ caseId: "LOA-2026-00131", matchedRuleName: "Urgent → Supervisor Escalation", assignedTeam: null, timestamp: "2026-05-02T04:15:00Z" },
+				{ caseId: "BIL-2026-00045", matchedRuleName: "Billing → Billing Team", assignedTeam: "Billing", timestamp: "2026-05-01T14:00:00Z" },
+				{ caseId: "FUP-2026-00098", matchedRuleName: null, assignedTeam: "General", timestamp: "2026-04-30T10:00:00Z" },
+			],
+		} as never,
+		retry: false,
 	})
 }
 
@@ -409,13 +436,14 @@ export function useRoutingLogQuery() {
 export function useTriageCategoriesQuery() {
 	return useQuery({
 		...orpc.staffAdmin.aiTriage.list.queryOptions(),
-		placeholderData: {
+		initialData: {
 			categories: [
 				{ id: "tc1", name: "LOA Request", triggerKeywords: ["leave", "absence", "LOA"], negativeKeywords: [], threshold: 0.7, routingRuleId: null, status: "active" as const, order: 1 },
 				{ id: "tc2", name: "Billing Inquiry", triggerKeywords: ["billing", "invoice", "payment"], negativeKeywords: ["refund"], threshold: 0.6, routingRuleId: null, status: "active" as const, order: 2 },
 				{ id: "tc3", name: "Complaint", triggerKeywords: ["complaint", "dissatisfied", "unhappy"], negativeKeywords: [], threshold: 0.65, routingRuleId: null, status: "active" as const, order: 3 },
 			],
-		},
+		} as never,
+		retry: false,
 	})
 }
 
@@ -465,9 +493,10 @@ const FHIR_RESOURCE_TYPES = [
 export function useFhirPermissionsQuery() {
 	return useQuery({
 		...orpc.staffAdmin.fhirSettings.getPermissions.queryOptions(),
-		placeholderData: {
+		initialData: {
 			permissions: FHIR_RESOURCE_TYPES.map(rt => ({ resourceType: rt, read: true, write: rt === "Patient" || rt === "Encounter" })),
-		},
+		} as never,
+		retry: false,
 	})
 }
 
@@ -484,14 +513,15 @@ export function useUpdateFhirPermissionsMutation() {
 export function useFhirOAuthQuery() {
 	return useQuery({
 		...orpc.staffAdmin.fhirSettings.getOAuth.queryOptions(),
-		placeholderData: {
+		initialData: {
 			authServerUrl: "https://fhir.altera.com/oauth2",
 			clientId: "hpcms-dev-client",
 			clientSecretMasked: "••••••••••••",
 			allowedScopes: ["openid", "fhirUser", "launch/patient"],
 			tokenExpirySeconds: 3600,
 			refreshExpirySeconds: 86400,
-		},
+		} as never,
+		retry: false,
 	})
 }
 
@@ -526,7 +556,7 @@ export function useProvisionFacilityMutation() {
 export function useDataSegregationMatrixQuery() {
 	return useQuery({
 		...orpc.staffAdmin.dataSegregation.getMatrix.queryOptions(),
-		placeholderData: {
+		initialData: {
 			cells: [
 				{ entityType: "Patient", tenantPair: "QC ↔ BGC", level: "isolated" as const, policyRef: null, justification: null, lastReviewed: "2026-01-15" },
 				{ entityType: "Case", tenantPair: "QC ↔ BGC", level: "shared_policy" as const, policyRef: "POL-2026-01", justification: "Shared care coordination", lastReviewed: "2026-01-15" },
@@ -538,6 +568,7 @@ export function useDataSegregationMatrixQuery() {
 			],
 			lastReviewed: "2026-01-15",
 			summary: { isolated: 5, sharedPolicy: 1, fullyShared: 1 },
-		},
+		} as never,
+		retry: false,
 	})
 }

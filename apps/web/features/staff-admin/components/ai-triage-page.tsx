@@ -108,7 +108,7 @@ function CategoryDialog({
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
-			<DialogTrigger render={<span />}>{trigger}</DialogTrigger>
+			<DialogTrigger render={<button type="button" className="contents" />}>{trigger}</DialogTrigger>
 			<DialogContent className="sm:max-w-lg">
 				<DialogHeader>
 					<DialogTitle>{title}</DialogTitle>

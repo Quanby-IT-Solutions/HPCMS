@@ -8,7 +8,7 @@ export function useConsentListQuery(patientId: string) {
 	return useQuery({
 		...orpc.supervisor.consent.list.queryOptions({ input: { patientId } }),
 		enabled: !!patientId,
-		placeholderData: () => ({
+		initialData: {
 			categories: [
 				{ category: "data_processing" as const, status: "granted" as const, effectiveDate: new Date("2026-01-15") },
 				{ category: "communications" as const, status: "granted" as const, effectiveDate: new Date("2026-01-15") },
@@ -26,7 +26,8 @@ export function useConsentListQuery(patientId: string) {
 					recordedBy: "J. Reyes",
 				},
 			],
-		}),
+		} as never,
+		retry: false,
 	})
 }
 
