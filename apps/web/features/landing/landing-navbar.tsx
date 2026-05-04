@@ -252,6 +252,39 @@ export function LandingNavbar({ isLight, onToggleTheme }: LandingNavbarProps) {
 							className="hidden sm:block"
 						>
 							<Link
+								href="/portal"
+								style={{
+									display: "flex",
+									alignItems: "center",
+									gap: "6px",
+									fontSize: "13px",
+									fontWeight: 600,
+									color: "var(--muted-foreground)",
+									background: "transparent",
+									padding: "7px 14px",
+									borderRadius: "var(--radius)",
+									textDecoration: "none",
+									letterSpacing: "0.01em",
+									whiteSpace: "nowrap",
+									transition: "color 0.2s",
+								}}
+								onMouseEnter={(e) => (e.currentTarget.style.color = "var(--foreground)")}
+								onMouseLeave={(e) => (e.currentTarget.style.color = "var(--muted-foreground)")}
+							>
+								<svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+									<path d="M7 1C3.7 1 1 3.7 1 7s2.7 6 6 6 6-2.7 6-6-2.7-6-6-6z" stroke="currentColor" strokeWidth="1.3" />
+									<path d="M5 5.5C5 4.7 5.7 4 7 4s2 .7 2 1.5S8 7 7 7v1" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+									<circle cx="7" cy="10" r="0.6" fill="currentColor" />
+								</svg>
+								Patient Portal
+							</Link>
+						</motion.div>
+						<motion.div
+							whileHover={{ scale: 1.02 }}
+							whileTap={{ scale: 0.97 }}
+							className="hidden sm:block"
+						>
+							<Link
 								href="/login"
 								style={{
 									display: "block",
@@ -267,7 +300,7 @@ export function LandingNavbar({ isLight, onToggleTheme }: LandingNavbarProps) {
 									whiteSpace: "nowrap",
 								}}
 							>
-								Sign In
+								Staff Sign In
 							</Link>
 						</motion.div>
 						<motion.a
@@ -348,6 +381,21 @@ export function LandingNavbar({ isLight, onToggleTheme }: LandingNavbarProps) {
 						<div style={{ marginTop: "16px", display: "flex", gap: "12px", alignItems: "center", flexWrap: "wrap" }}>
 							<ThemeToggle isLight={isLight} onToggle={onToggleTheme} />
 							<Link
+								href="/portal"
+								style={{
+									fontSize: "14px",
+									fontWeight: 600,
+									color: "var(--foreground)",
+									background: "transparent",
+									border: "1.5px solid var(--border)",
+									padding: "10px 20px",
+									borderRadius: "var(--radius)",
+									textDecoration: "none",
+								}}
+							>
+								Patient Portal
+							</Link>
+							<Link
 								href="/login"
 								style={{
 									fontSize: "14px",
@@ -360,7 +408,7 @@ export function LandingNavbar({ isLight, onToggleTheme }: LandingNavbarProps) {
 									textDecoration: "none",
 								}}
 							>
-								Sign In
+								Staff Sign In
 							</Link>
 								<motion.a
 									href="#contact"
