@@ -52,9 +52,20 @@ export interface AppShellProps {
 
 // ─── HELPERS ───────────────────────────────────────────────────────────────────
 
-function isActive(pathname: string, href: string): boolean {
-	if (pathname === href) return true
-	return pathname.startsWith(`${href}/`)
+function getActiveHref(pathname: string, navGroups: StaffShellNavGroup[]): string | null {
+	let bestMatch = null
+	let maxLen = -1
+	for (const group of navGroups) {
+		for (const item of group.items) {
+			if (pathname === item.href || pathname.startsWith(`${item.href}/`)) {
+				if (item.href.length > maxLen) {
+					bestMatch = item.href
+					maxLen = item.href.length
+				}
+			}
+		}
+	}
+	return bestMatch
 }
 
 function initials(user: AppShellUser): string {
@@ -148,7 +159,7 @@ function SidebarBody({ title, subtitle, navGroups, collapsed, onItemClick }: Sid
 
 						<ul className="flex flex-col gap-0.5">
 							{group.items.map(item => {
-								const active = isActive(pathname, item.href)
+								const active = item.href === getActiveHref(pathname, navGroups)
 								return (
 									<li key={item.href} className="relative">
 										<Link
@@ -476,9 +487,12 @@ export function AppShell({
 	const sidebarWidth = collapsed ? SIDEBAR_W_COLLAPSED : SIDEBAR_W_EXPANDED
 
 	const currentLabel = useMemo(() => {
-		for (const g of navGroups) {
-			for (const item of g.items) {
-				if (isActive(pathname, item.href)) return item.label
+		const activeHref = getActiveHref(pathname, navGroups)
+		if (activeHref) {
+			for (const g of navGroups) {
+				for (const item of g.items) {
+					if (item.href === activeHref) return item.label
+				}
 			}
 		}
 		return title
