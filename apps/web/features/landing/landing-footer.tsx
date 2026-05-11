@@ -101,7 +101,7 @@ export function LandingFooter() {
 					</div>
 
 					{/* Nav links */}
-					<nav>
+						<nav>
 						<div style={{ fontSize: "11px", fontWeight: 700, color: "var(--muted-foreground)", letterSpacing: "0.07em", textTransform: "uppercase", marginBottom: "12px" }}>
 							Platform
 						</div>
@@ -125,6 +125,45 @@ export function LandingFooter() {
 									</motion.a>
 								</li>
 							))}
+						</ul>
+					</nav>
+
+					{/* Portals */}
+					<nav>
+						<div style={{ fontSize: "11px", fontWeight: 700, color: "var(--muted-foreground)", letterSpacing: "0.07em", textTransform: "uppercase", marginBottom: "12px" }}>
+							Portals
+						</div>
+						<ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "8px" }}>
+							<li>
+								<a
+									href="/portal"
+									style={{
+										fontSize: "13px",
+										color: "var(--muted-foreground)",
+										textDecoration: "none",
+										display: "inline-block",
+									}}
+									onMouseEnter={(e) => { (e.target as HTMLElement).style.color = "var(--foreground)" }}
+									onMouseLeave={(e) => { (e.target as HTMLElement).style.color = "var(--muted-foreground)" }}
+								>
+									Patient Portal
+								</a>
+							</li>
+							<li>
+								<a
+									href="/login"
+									style={{
+										fontSize: "13px",
+										color: "var(--muted-foreground)",
+										textDecoration: "none",
+										display: "inline-block",
+									}}
+									onMouseEnter={(e) => { (e.target as HTMLElement).style.color = "var(--foreground)" }}
+									onMouseLeave={(e) => { (e.target as HTMLElement).style.color = "var(--muted-foreground)" }}
+								>
+									Staff Login
+								</a>
+							</li>
 						</ul>
 					</nav>
 
